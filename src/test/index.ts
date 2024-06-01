@@ -2,8 +2,8 @@ import { Client } from '../../dist'
 // import { Client } from '..'
 
 const client = new Client({
-  pairing: true,
-  state: ''
+  phoneNumber: 6285878897780,
+  pairing: true
 })
 
 client.on('ready', (ctx) => {
@@ -11,7 +11,5 @@ client.on('ready', (ctx) => {
 })
 
 client.on('message', (ctx) => {
-  if (ctx.message == 'hai') {
-    ctx.send('Heloooww')
-  }
+  console.log({ ctx })
 })

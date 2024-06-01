@@ -7,7 +7,7 @@
     "target": "ES2022",
     "moduleResolution": "Node10",
     "module": "CommonJS",
-    "declaration": true,
+    "declaration": false,
     "isolatedModules": true,
     "noEmit": true,
     "outDir": "dist",
