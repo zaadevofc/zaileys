@@ -1,1 +1,2 @@
-console.log('Hallo dari src/index')
+export * from './modules'
+export * from './types'

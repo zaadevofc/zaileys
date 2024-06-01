@@ -1,14 +1,26 @@
 {
   "name": "zaileys",
-  "description": "Simply WhatsApp NodeJS API",
-  "author": "zaadevofc",
+  "description": "Zaileys - Typescript/Javascript WhatsApp NodeJS API",
+  "author": {
+    "name": "zaadevofc",
+    "email": "zaadevofc@gmail.com",
+    "url": "https://github.com/zaadevofc"
+  },
   "version": "0.0.1-dev",
-  "license": "ISC",
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "homepage": "https://github.com/zaadevofc/zaileys",
+  "bugs": {
+    "url": "https://github.com/zaadevofc/zaileys/issues"
+  },
+  "repository": {
+    "url": "https://github.com/zaadevofc/zaileys"
+  },
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "test": "ts-node src/test"
   },
   "engines": {
     "node": ">=18.17.0"

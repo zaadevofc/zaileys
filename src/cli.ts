@@ -1,1 +1,3 @@
-console.log('Hallo')
+export function ppp () {
+  console.log('Hallo')
+}
