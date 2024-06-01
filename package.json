@@ -33,13 +33,16 @@
     "node",
     "api"
   ],
+  "contributors": [
+    "zaadevofc@gmail.com"
+  ],
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.2",
+    "pino": "^9.1.0"
+  },
   "devDependencies": {
     "@types/node": "^20.12.14",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
-  },
-  "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.2",
-    "pino": "^9.1.0"
   }
 }
