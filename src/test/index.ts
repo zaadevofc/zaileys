@@ -1,7 +1,9 @@
-import { Client } from '..'
+import { Client } from '../../dist'
+// import { Client } from '..'
 
 const client = new Client({
-  pairing: true
+  pairing: true,
+  state: ''
 })
 
 client.on('ready', (ctx) => {

@@ -6,7 +6,7 @@
     "email": "zaadevofc@gmail.com",
     "url": "https://github.com/zaadevofc"
   },
-  "version": "0.0.1-dev",
+  "version": "0.0001.1-dev",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -37,5 +37,9 @@
     "@types/node": "^20.12.14",
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.2",
+    "pino": "^9.1.0"
   }
 }
