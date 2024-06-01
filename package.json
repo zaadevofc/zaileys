@@ -1,0 +1,29 @@
+{
+  "name": "zaileys",
+  "description": "Simply WhatsApp NodeJS API",
+  "author": "zaadevofc",
+  "version": "0.0.1-dev",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "keywords": [
+    "zaileys",
+    "baileys",
+    "whatsapp",
+    "bot",
+    "node",
+    "api"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.12.14",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5"
+  }
+}
