@@ -3,5 +3,6 @@ src
 session
 
 .env
+.github
 tsconfig.json
 tsup.config.ts
