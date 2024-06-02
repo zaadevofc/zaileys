@@ -7,6 +7,14 @@ const client = new Client({
   showLogs: true,
 })
 
+client.on('connection', (ctx) => {
+  if (ctx == 'ready') {
+    // client.send('Haloo', { id: 34 })
+  }
+})
+
 client.on('message', (ctx) => {
-  console.log({ ctx })
+  // if (ctx.body.text == 'p') {
+  //   ctx.send('Haloo')
+  // }
 })

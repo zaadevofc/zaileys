@@ -20,7 +20,7 @@ export function ConnectionConfig(props: ClientProps): UserFacingSocketConfig {
     msgRetryCounterCache: new NodeCache(),
     syncFullHistory: true,
     mobile: false,
-    markOnlineOnConnect: true,
+    markOnlineOnConnect: false,
     generateHighQualityLinkPreview: true,
     browser: ["Mac OS", 'chrome', "121.0.6167.159"],
     version: defaults.version as never,
@@ -49,7 +49,6 @@ export function ConnectionConfig(props: ClientProps): UserFacingSocketConfig {
           },
         };
       }
-
       return message;
     }
   }

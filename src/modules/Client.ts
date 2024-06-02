@@ -5,7 +5,7 @@ import {
   useMultiFileAuthState
 } from "@whiskeysockets/baileys";
 import pino from "pino";
-import { ActionsProps, ClientProps } from "../types";
+import { ActionsProps, ClientProps, Prettify } from "../types";
 import { ConnectionConfig, delay, loop } from "../utils";
 import { InitDisplay } from "./Display";
 import { socket } from "./Socket";
@@ -62,7 +62,8 @@ export class Client {
     }
 
     sock.ev.on('messages.upsert', async (m) => {
-      this.socket.emit('message', m.messages);
+      console.log(JSON.stringify(m.messages, null, 2))
+      this.socket.emit('act_message', m.messages);
     });
 
     sock.ev.process(async (ev) => {
@@ -73,6 +74,7 @@ export class Client {
         const { connection, lastDisconnect, qr } = update;
 
         if (connection == 'connecting') {
+          this.socket.emit('act_connection', 'connecting');
           this.socket.emit('conn_msg', ['start', 'Connecting to server...'])
         }
 
@@ -81,6 +83,7 @@ export class Client {
         }
 
         if (connection === "close") {
+          this.socket.emit('act_connection', 'close');
           const last: any = lastDisconnect?.error;
           const isReconnect = last?.output.statusCode !== DisconnectReason.loggedOut;
           if (isReconnect) {
@@ -99,8 +102,8 @@ export class Client {
         }
 
         if (connection === "open") {
+          this.socket.emit('act_connection', 'ready');
           this.socket.emit('conn_msg', ['succeed', 'Connected to server']);
-          this.socket.emit('ready', true);
           console.log()
         }
       }
@@ -109,11 +112,11 @@ export class Client {
     return sock;
   }
 
-  on(actions: ActionsProps, callback: (ctx: any) => void) {
-    const call = (name: string, cb: (x: any) => void) => this.socket.on(name, cb);
+  on<T extends keyof ActionsProps>(actions: T, callback: (ctx: Prettify<ActionsProps[T]>) => void) {
+    const call = (name: string, cb: (x: any) => void) => this.socket.on(`act_${name}`, cb);
 
     switch (actions) {
-      case 'ready':
+      case 'connection':
         call(actions, callback);
         break;
 

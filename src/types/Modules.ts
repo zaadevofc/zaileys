@@ -1,3 +1,9 @@
+import { MessageParserProps, ReadyParserProps } from "./Parser";
+
+export type Prettify<T> = {
+  [K in keyof T]: T[K]
+} & {}
+
 export type ClientProps = {
   phoneNumber: number;
   pairing?: boolean;
@@ -6,4 +12,7 @@ export type ClientProps = {
   store?: any;
 }
 
-export type ActionsProps = 'ready' | 'message'
+export type ActionsProps = {
+  message: MessageParserProps;
+  connection: ReadyParserProps
+}

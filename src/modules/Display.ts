@@ -30,8 +30,8 @@ export function InitDisplay(config: ClientProps) {
   });
 
   if (config.showLogs) {
-    socket.on('conn_msg', (data: any) => {
-      init_spin[data[0]](data[1])
-    });
+    // socket.on('conn_msg', (data: any) => {
+    //   init_spin[data[0]](data[1])
+    // });
   }
 }
