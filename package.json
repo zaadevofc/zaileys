@@ -6,7 +6,7 @@
     "email": "zaadevofc@gmail.com",
     "url": "https://github.com/zaadevofc"
   },
-  "version": "0.0031.1-dev",
+  "version": "0.0002.1-dev",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
