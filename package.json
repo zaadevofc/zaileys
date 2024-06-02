@@ -12,6 +12,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "homepage": "https://github.com/zaadevofc/zaileys",
+  "funding": "https://github.com/zaadevofc/zaileys",
   "bugs": {
     "url": "https://github.com/zaadevofc/zaileys/issues"
   },
@@ -21,10 +22,11 @@
   "scripts": {
     "build": "tsup",
     "test:dev": "ts-node-dev src/test",
-    "test": "ts-node src/test"
+    "test": "ts-node src/test",
+    "npm:prod": "tsup && npm publish"
   },
   "engines": {
-    "node": ">=18.17.0"
+    "node": ">=18"
   },
   "keywords": [
     "zaileys",

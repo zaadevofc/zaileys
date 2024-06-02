@@ -12,9 +12,9 @@ export type MessageInternalProps = {
   isGroup: boolean;
   isViewOnce: boolean;
 }
-export type MessageParserProps = MessageInternalProps & {
+export type MessageParserProps = MessageInternalProps[] & {
   body: {
     type: MessageTypeProps;
     text: string
   }
-}
+}[]

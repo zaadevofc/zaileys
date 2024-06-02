@@ -8,6 +8,7 @@ export type ClientProps = {
   phoneNumber: number;
   pairing?: boolean;
   showLogs?: boolean;
+  authors?: number[];
   state?: any;
   store?: any;
 }

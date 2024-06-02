@@ -11,20 +11,23 @@ import { InitDisplay } from "./Display";
 import { socket } from "./Socket";
 import chalk from "chalk";
 import { spawn } from "child_process";
+import { MessageParser } from "./Parser";
 
 export class Client {
   public readonly pairing: boolean;
   public readonly phoneNumber: number;
   public readonly showLogs: boolean;
+  public readonly authors: number[];
 
   private socket = socket;
   private store: any;
   private state: any;
 
-  constructor({ pairing, phoneNumber, showLogs }: ClientProps) {
+  constructor({ pairing, phoneNumber, showLogs, authors }: ClientProps) {
     this.pairing = pairing ?? true;
     this.phoneNumber = phoneNumber;
     this.showLogs = showLogs ?? true;
+    this.authors = authors ?? [];
 
     this.client()
   }
@@ -62,7 +65,6 @@ export class Client {
     }
 
     sock.ev.on('messages.upsert', async (m) => {
-      console.log(JSON.stringify(m.messages, null, 2))
       this.socket.emit('act_message', m.messages);
     });
 
@@ -91,7 +93,7 @@ export class Client {
             this.client()
           }
 
-          if (!isReconnect){
+          if (!isReconnect) {
             this.socket.emit('conn_msg', ['fail', 'Failed to connect. Please delete session and try again.']);
             return;
           }
@@ -117,11 +119,11 @@ export class Client {
 
     switch (actions) {
       case 'connection':
-        call(actions, callback);
+        call(actions, (msg) => callback(msg));
         break;
 
       case 'message':
-        call(actions, callback);
+        call(actions, (msg) => callback(MessageParser(msg, this as any) as any));
         break;
 
       default:

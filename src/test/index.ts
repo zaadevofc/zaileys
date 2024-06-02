@@ -5,6 +5,7 @@ const client = new Client({
   phoneNumber: 6285878897780,
   pairing: true,
   showLogs: true,
+  authors: []
 })
 
 client.on('connection', (ctx) => {
@@ -14,7 +15,6 @@ client.on('connection', (ctx) => {
 })
 
 client.on('message', (ctx) => {
-  // if (ctx.body.text == 'p') {
-  //   ctx.send('Haloo')
-  // }
+  console.log(JSON.stringify(ctx, null, 2))
+  // console.log(ctx)
 })
