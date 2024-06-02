@@ -43,6 +43,7 @@
     "events": "^3.3.0",
     "link-preview-js": "^3.0.5",
     "node-cache": "^5.1.2",
+    "ora": "^5.4.1",
     "pino": "^7.11.0",
     "qrcode-terminal": "^0.12.0"
   },
