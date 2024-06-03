@@ -1,3 +1,4 @@
+import { makeInMemoryStore } from "@whiskeysockets/baileys";
 import { MessageParserProps, ReadyParserProps } from "./Parser";
 
 export type Prettify<T> = {
@@ -10,7 +11,8 @@ export type ClientProps = {
   showLogs?: boolean;
   authors?: number[];
   state?: any;
-  store?: any;
+  me?: any;
+  store?: ReturnType<typeof makeInMemoryStore>;
 }
 
 export type ActionsProps = {

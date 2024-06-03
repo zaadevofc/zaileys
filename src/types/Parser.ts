@@ -15,6 +15,6 @@ export type MessageInternalProps = {
 export type MessageParserProps = MessageInternalProps[] & {
   body: {
     type: MessageTypeProps;
-    text: string
+    text?: string
   }
 }[]

@@ -6,7 +6,7 @@
     "email": "zaadevofc@gmail.com",
     "url": "https://github.com/zaadevofc"
   },
-  "version": "0.0002.1-dev",
+  "version": "0.0003.1-dev",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -43,12 +43,15 @@
     "@whiskeysockets/baileys": "^6.7.2",
     "cfonts": "^3.2.0",
     "chalk": "^4.1.2",
+    "dayjs": "^1.11.11",
     "events": "^3.3.0",
     "link-preview-js": "^3.0.5",
+    "log-update": "^3.4.0",
     "node-cache": "^5.1.2",
     "ora": "^5.4.1",
     "pino": "^7.11.0",
-    "qrcode-terminal": "^0.12.0"
+    "qrcode-terminal": "^0.12.0",
+    "quick-lru": "^5.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.13.0",

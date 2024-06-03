@@ -12,6 +12,7 @@ import { socket } from "./Socket";
 import chalk from "chalk";
 import { spawn } from "child_process";
 import { MessageParser } from "./Parser";
+import dayjs from "dayjs";
 
 export class Client {
   public readonly pairing: boolean;
@@ -20,8 +21,9 @@ export class Client {
   public readonly authors: number[];
 
   private socket = socket;
-  private store: any;
+  private store: ReturnType<typeof makeInMemoryStore> | undefined;
   private state: any;
+  private me: any;
 
   constructor({ pairing, phoneNumber, showLogs, authors }: ClientProps) {
     this.pairing = pairing ?? true;
@@ -30,6 +32,10 @@ export class Client {
     this.authors = authors ?? [];
 
     this.client()
+  }
+
+  set saveState(state: any) {
+    this.state = state
   }
 
   private async client() {
@@ -69,9 +75,20 @@ export class Client {
     });
 
     sock.ev.process(async (ev) => {
-      if (ev["creds.update"]) await saveCreds();
-      if (ev["connection.update"]) {
+      if (ev["creds.update"]) {
+        let data = ev["creds.update"];
+        this.socket.emit('conn_config', [
+          chalk`{greenBright → Login as       :} {redBright ${data.me?.verifiedName || data.me?.name}}`,
+          chalk`{greenBright → Login Method   :} {cyanBright ${this.pairing ? 'Pairing Code' : 'QR Code'}}`,
+          chalk`{greenBright → Login Platform :} {yellowBright ${data.platform}}`,
+          chalk`{greenBright → Phone Creds    :} {magentaBright ${data.phoneId}}`,
+          chalk`{greenBright → Device Creds   :} {magentaBright ${data.deviceId}}`,
+          ''
+        ]);
+        await saveCreds()
+      };
 
+      if (ev["connection.update"]) {
         const update = ev["connection.update"];
         const { connection, lastDisconnect, qr } = update;
 
@@ -123,7 +140,7 @@ export class Client {
         break;
 
       case 'message':
-        call(actions, (msg) => callback(MessageParser(msg, this as any) as any));
+        call(actions, async (msg) => callback(MessageParser(msg, this as any) as any));
         break;
 
       default:

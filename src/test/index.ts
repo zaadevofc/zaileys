@@ -1,5 +1,5 @@
 // import { Client } from '../../dist'
-import { Client } from '..'
+import { Client, jsonString } from '..'
 
 const client = new Client({
   phoneNumber: 6285878897780,
@@ -15,6 +15,9 @@ client.on('connection', (ctx) => {
 })
 
 client.on('message', (ctx) => {
-  console.log(JSON.stringify(ctx, null, 2))
-  // console.log(ctx)
+  // if(ctx[0].body.text == 'ss') {
+
+  // }
+  // console.log(JSON.stringify(ctx, null, 2))
+  console.log('ssss ', jsonString(ctx))
 })
