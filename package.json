@@ -6,24 +6,24 @@
     "email": "zaadevofc@gmail.com",
     "url": "https://github.com/zaadevofc"
   },
-  "version": "0.0003.1-dev",
+  "version": "0.5.1-dev",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "homepage": "https://github.com/zaadevofc/zaileys",
-  "funding": "https://github.com/zaadevofc/zaileys",
+  "funding": "https://ko-fi.com/zaadevofc",
   "bugs": {
     "url": "https://github.com/zaadevofc/zaileys/issues"
   },
   "repository": {
-    "url": "https://github.com/zaadevofc/zaileys"
+    "url": "git+https://github.com/zaadevofc/zaileys.git"
   },
   "scripts": {
     "build": "tsup",
     "test:dev": "ts-node-dev src/test",
     "test": "ts-node src/test",
-    "npm:prod": "tsup && npm publish"
+    "prod": "tsup && npm publish"
   },
   "engines": {
     "node": ">=18"

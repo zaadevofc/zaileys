@@ -17,6 +17,10 @@ export async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export const fetchJson = async (uri: any, method?: any) => await fetch(uri).then((x) => x.json())
+
+export const postJson = async (uri: any, data: any) => await fetch(uri, { body: JSON.stringify(data), method: 'POST' }).then((x) => x.json())
+
 export function getValuesByKeys(object: any, keys: string[]): any[] {
   const values: any[] = [];
 

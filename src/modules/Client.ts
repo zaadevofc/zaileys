@@ -4,15 +4,14 @@ import {
   makeWASocket,
   useMultiFileAuthState
 } from "@whiskeysockets/baileys";
+import chalk from "chalk";
 import pino from "pino";
 import { ActionsProps, ClientProps, Prettify } from "../types";
-import { ConnectionConfig, delay, loop } from "../utils";
+import { ConnectionConfig, delay, fetchJson, loop } from "../utils";
 import { InitDisplay } from "./Display";
-import { socket } from "./Socket";
-import chalk from "chalk";
-import { spawn } from "child_process";
 import { MessageParser } from "./Parser";
-import dayjs from "dayjs";
+import { socket } from "./Socket";
+import pkg from '../../package.json'
 
 export class Client {
   public readonly pairing: boolean;
@@ -74,17 +73,24 @@ export class Client {
       this.socket.emit('act_message', m.messages);
     });
 
+    // console.log(/)
+
+    let lts: any = await fetchJson('https://registry.npmjs.org/-/package/zaileys/dist-tags')
     sock.ev.process(async (ev) => {
       if (ev["creds.update"]) {
         let data = ev["creds.update"];
-        this.socket.emit('conn_config', [
-          chalk`{greenBright → Login as       :} {redBright ${data.me?.verifiedName || data.me?.name}}`,
-          chalk`{greenBright → Login Method   :} {cyanBright ${this.pairing ? 'Pairing Code' : 'QR Code'}}`,
-          chalk`{greenBright → Login Platform :} {yellowBright ${data.platform}}`,
-          chalk`{greenBright → Phone Creds    :} {magentaBright ${data.phoneId}}`,
-          chalk`{greenBright → Device Creds   :} {magentaBright ${data.deviceId}}`,
-          ''
-        ]);
+        if (data && lts) {
+          this.socket.emit('conn_config', [
+            chalk`{greenBright → Login as       :} {redBright ${data.me?.verifiedName || data.me?.name}}`,
+            chalk`{greenBright → Login Method   :} {cyanBright ${data.pairingCode ? 'Pairing Code' : 'QR Code'}}`,
+            chalk`{greenBright → Login Platform :} {cyanBright ${data.platform}}`,
+            chalk`{greenBright → Creds Phone    :} {magentaBright ${data.phoneId}}`,
+            chalk`{greenBright → Creds Device   :} {magentaBright ${data.deviceId}}`,
+            chalk`{greenBright → Libs Current   :} {yellowBright zaileys-${pkg.version}}`,
+            chalk`{greenBright → Libs Latest    :} {${lts?.latest == pkg.version ? 'yellowBright' : 'cyanBright'} zaileys-${lts?.latest}}${lts?.latest == pkg.version ? '' : ' {cyan newest!}'}`,
+            ''
+          ]);
+        }
         await saveCreds()
       };
 
@@ -105,14 +111,20 @@ export class Client {
           this.socket.emit('act_connection', 'close');
           const last: any = lastDisconnect?.error;
           const isReconnect = last?.output.statusCode !== DisconnectReason.loggedOut;
+          
           if (isReconnect) {
             this.socket.emit('conn_msg', ['warn', 'Failed to connect. Waiting for reconnect...']);
             this.client()
           }
 
-          if (!isReconnect) {
+          if (DisconnectReason.loggedOut || DisconnectReason.badSession) {
             this.socket.emit('conn_msg', ['fail', 'Failed to connect. Please delete session and try again.']);
             return;
+          }
+          
+          if (DisconnectReason.connectionReplaced) {
+            await this.socket.emit('conn_msg', ['fail', chalk`{redBright Connection was lost because the same session was in use!}`]);
+            await process.exit(0)
           }
 
           await this.socket.emit('conn_msg', ['info', 'Trying to reconnect...']);

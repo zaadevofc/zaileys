@@ -129,7 +129,9 @@ declare function jsonString(obj: any): any;
 declare function jsonParse(obj: any): any;
 declare function timeout(cb: () => void, ms: number): NodeJS.Timeout;
 declare function delay(ms: number): Promise<unknown>;
+declare const fetchJson: (uri: any, method?: any) => Promise<any>;
+declare const postJson: (uri: any, data: any) => Promise<any>;
 declare function getValuesByKeys(object: any, keys: string[]): any[];
 declare function removeKeys(object: any, keys: string[]): any;
 
-export { type ActionsProps, Client, type ClientProps, ConnectionConfig, InitDisplay, MESSAGE_TYPE, MessageParser, type Prettify, delay, getMessageType, getValuesByKeys, jsonParse, jsonString, loop, removeKeys, timeout };
+export { type ActionsProps, Client, type ClientProps, ConnectionConfig, InitDisplay, MESSAGE_TYPE, MessageParser, type Prettify, delay, fetchJson, getMessageType, getValuesByKeys, jsonParse, jsonString, loop, postJson, removeKeys, timeout };

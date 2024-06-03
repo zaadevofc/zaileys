@@ -30,21 +30,30 @@ export function InitDisplay(config: ClientProps) {
   });
 
   const init_spin: any = ora()
+
   socket.on('conn_msg', (data: any) => {
     init_spin[data[0]](data[1])
+
     if (data[0] == 'succeed') {
+      cache.set('conn_status', data[0])
       socket.on('conn_config', (data: any) => {
         data?.forEach((e: any, i: any) => {
           console.log(e);
         });
+        if (config.showLogs) {
+          console.log(
+            chalk`{cyan — Realtime Logs =>}\n`
+          )
+        }
       });
     }
   });
 
-
   if (config.showLogs) {
-    // socket.on('conn_msg', (data: any) => {
-    //   init_spin[data[0]](data[1])
-    // });
+    socket.on('act_msg', (data: any) => {
+
+      console.log({ data })
+      // init_spin[data[0]](data[1])
+    });
   }
 }
