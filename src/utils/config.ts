@@ -3,6 +3,7 @@ import pino from 'pino';
 import { ClientProps } from "../types";
 import defaults from './defaults.json'
 import NodeCache from "node-cache";
+import { jsonParse } from "./tools";
 
 export function ConnectionConfig(props: ClientProps): UserFacingSocketConfig {
   async function getMessage(key: any) {
@@ -122,6 +123,8 @@ export const MESSAGE_TYPE = {
 }
 
 export function getMessageType(obj: any): string[] {
+  obj = jsonParse(obj)
+  console.log({obj})
   if (typeof obj !== 'object' || obj === null) return [];
   for (const key of Object.keys(obj)) {
     if (Object.keys(MESSAGE_TYPE).includes(key)) return [MESSAGE_TYPE[key as keyof typeof MESSAGE_TYPE], key];

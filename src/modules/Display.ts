@@ -1,12 +1,9 @@
-import cfonts from 'cfonts'
-import ora from 'ora';
-import { cache, socket } from './Socket';
-import { ClientProps } from '../types';
+import cfonts from 'cfonts';
 import chalk from 'chalk';
-import log from 'log-update';
-import dayjs from 'dayjs';
-
-const c = chalk;
+import ora from 'ora';
+import { ClientProps } from '../types';
+import { cache, socket } from './Socket';
+import { funding } from '../../package.json'
 
 export function InitDisplay(config: ClientProps) {
   console.clear()
@@ -19,7 +16,7 @@ export function InitDisplay(config: ClientProps) {
     maxLength: '0'
   })
 
-  cfonts.say(`         Love this package? help me with donation:         |               https://ko-fi.com/zaadevofc                 |`, {
+  cfonts.say(`         Love this package? help me with donation:         |               ${funding}                 |`, {
     font: 'console',
     colors: ['black'],
     background: 'green',

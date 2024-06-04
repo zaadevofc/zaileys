@@ -1,50 +1,56 @@
 import { proto } from '@whiskeysockets/baileys';
-import { MessageParserProps } from './../types/Parser';
 import { ClientProps } from '../types';
-import { MESSAGE_TYPE, getMessageType, getValuesByKeys, jsonParse, jsonString, removeKeys } from '../utils';
+import { getMessageType, getValuesByKeys, jsonString, removeKeys } from '../utils';
+import { MessageParserProps } from './../types/Parser';
 
 export function MessageParser(ctx: proto.IWebMessageInfo[], config: ClientProps): MessageParserProps {
   let messages: any = ctx.map((msg, i) => {
-    let jid = Number(msg.key.remoteJid?.split('@')[0])
     console.log(jsonString(msg))
 
-    let bodyObj = removeKeys(msg, ['contextInfo'])
-    let replyObj = getValuesByKeys(msg, ['quotedMessage'])[0]
+    let bodyObj = removeKeys(msg.message, ['contextInfo'])
+    let replyObj = getValuesByKeys(msg.message, ['quotedMessage'])[0]
 
-    let bodyType = getMessageType(bodyObj);
-    let bodyText = getValuesByKeys(bodyObj, ['conversation', 'text', 'caption', 'contentText', 'description'])[0]
+    let bodyKey = msg.key;
+    let replyKey = getValuesByKeys(msg.message, ['contextInfo'])[0]
 
+    let bodyJid = /\b\d+@\S+\b/g.exec(jsonString(bodyKey))?.[0]
+    let replyJid = /\b\d+@\S+\b/g.exec(jsonString(replyKey))?.[0]
+
+    let bodyType: any = getMessageType(bodyObj);
+    bodyType = bodyType[0] == 'viewOnce' ? getMessageType(getValuesByKeys(bodyObj, [bodyType[1]])) : bodyType
     let replyType = getMessageType(replyObj);
+    replyType = replyType[0] == 'viewOnce' ? getMessageType(getValuesByKeys(bodyObj, [replyType[1]])) : replyType
+
+    let bodyText = getValuesByKeys(bodyObj, ['conversation', 'text', 'caption', 'contentText', 'description'])[0]
     let replyText = getValuesByKeys(replyObj, ['conversation', 'text', 'caption', 'contentText', 'description'])[0]
 
-    let bodyMedia = bodyType[0] != 'text' && getValuesByKeys(bodyObj, [bodyType[1]])
-    // bodyMedia = bodyType[0] == 'viewOnce' ? getValuesByKeys(bodyMedia, getMessageType(bodyMedia))[0] : bodyMedia
+    let bodyMedia = bodyType[0] != 'text' && getValuesByKeys(bodyObj, [bodyType[1]])[0]
+    bodyMedia = bodyType[0] == 'viewOnce' ? getValuesByKeys(bodyMedia, getMessageType(bodyMedia))[0] : bodyMedia
 
     let replyMedia = replyType[0] != 'text' && getValuesByKeys(replyObj, [replyType[1]])[0]
     replyMedia = replyType[0] == 'viewOnce' ? getValuesByKeys(replyMedia, getMessageType(replyMedia))[0] : replyMedia
-    config.store?.loadMessage("6289526382389@s.whatsapp.net", "81AF2468F3C7DD936D771326004D5930").then(x => {
-      console.log('orang =>>>>  ', x)
-    })
+
     return {
       chatId: msg.key.id,
       fromMe: msg.key.fromMe,
       pushName: msg.pushName,
       remoteJid: msg.key.remoteJid,
       timestamp: msg.messageTimestamp,
-      isAuthor: config.authors!.includes(jid),
-      isBroadcast: msg.broadcast,
       body: {
-        type: bodyType,
+        type: bodyType[0],
         text: bodyText,
-        isGroup: jsonString(bodyObj).includes('@g.us') ?? false,
+        isGroup: jsonString(bodyKey).includes('@g.us') ?? false,
         isViewOnce: jsonString(bodyObj).includes('viewOnce'),
-        media: getValuesByKeys(bodyObj, [bodyType[1]]),
+        isBroadcast: msg.broadcast,
+        isAuthor: bodyJid,
+        media: bodyMedia,
       },
-      reply: {
+      reply: replyObj && {
         type: replyType[0],
         text: replyText,
-        isGroup: jsonString(replyObj).includes('@g.us') ?? false,
-        isViewOnce: jsonString(replyObj).includes('viewOnce'),
+        isGroup: jsonString(replyKey).includes('@g.us') ?? false,
+        isViewOnce: jsonString(replyKey).includes('viewOnce'),
+        isAuthor: config.authors!.includes(Number(replyJid?.split('@')[0])),
         media: replyMedia,
       }
     };
