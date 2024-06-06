@@ -1,3 +1,5 @@
+import { MESSAGE_TYPE } from "./config";
+
 export function loop(cb: () => void, ms: number) {
   return setInterval(cb, ms);
 }
@@ -66,5 +68,18 @@ export function removeKeys(object: any, keys: string[]): any {
   };
 
   return remove(jsonParse(object));
+}
+
+export function getMessageType(obj: any): string[] {
+  obj = jsonParse(obj)
+  if (typeof obj !== 'object' || obj === null) return [];
+  for (const key of Object.keys(obj)) {
+    if (Object.keys(MESSAGE_TYPE).includes(key)) return [MESSAGE_TYPE[key as keyof typeof MESSAGE_TYPE], key];
+  }
+  for (const value of Object.values(obj)) {
+    const nestedType = getMessageType(value);
+    if (nestedType) return nestedType;
+  }
+  return [];
 }
 

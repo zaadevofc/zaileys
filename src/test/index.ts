@@ -5,7 +5,7 @@ const client = new Client({
   phoneNumber: 6285878897780,
   pairing: true,
   showLogs: true,
-  authors: [6285878897780]
+  authors: [6285878897780],
 })
 
 client.on('connection', (ctx) => {

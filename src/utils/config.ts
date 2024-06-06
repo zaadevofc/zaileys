@@ -1,14 +1,13 @@
-import { UserFacingSocketConfig, makeCacheableSignalKeyStore, proto } from "@whiskeysockets/baileys";
+import { AuthenticationState, UserFacingSocketConfig, makeCacheableSignalKeyStore, makeInMemoryStore, proto } from "@whiskeysockets/baileys";
+import NodeCache from "node-cache";
 import pino from 'pino';
 import { ClientProps } from "../types";
-import defaults from './defaults.json'
-import NodeCache from "node-cache";
-import { jsonParse } from "./tools";
+import defaults from './defaults.json';
 
-export function ConnectionConfig(props: ClientProps): UserFacingSocketConfig {
+export function ConnectionConfig(props: ClientProps, state: AuthenticationState, store: ReturnType<typeof makeInMemoryStore>): UserFacingSocketConfig {
   async function getMessage(key: any) {
-    if (props.store) {
-      const msg = await props.store.loadMessage(key.remoteJid, key.id);
+    if (store) {
+      const msg = await store.loadMessage(key.remoteJid, key.id);
       return msg?.message || undefined;
     }
     return proto.Message.fromObject({});
@@ -24,12 +23,12 @@ export function ConnectionConfig(props: ClientProps): UserFacingSocketConfig {
     mobile: false,
     markOnlineOnConnect: false,
     generateHighQualityLinkPreview: true,
-    browser: ["Mac OS", 'chrome', "121.0.6167.159"],
+    browser: defaults.browser as never,
     version: defaults.version as never,
     logger: pino({ level: 'fatal' }) as never,
     auth: {
-      creds: props.state.creds,
-      keys: makeCacheableSignalKeyStore(props.state.keys, pino().child({ level: 'silent', stream: 'store' }) as any),
+      creds: state.creds,
+      keys: makeCacheableSignalKeyStore(state.keys, pino().child({ level: 'silent', stream: 'store' }) as any),
     },
     getMessage,
     patchMessageBeforeSending: (message: any) => {
@@ -120,18 +119,4 @@ export const MESSAGE_TYPE = {
   extendedTextMessageWithParentKey: 'text',
   placeholderMessage: 'placeholder',
   encEventUpdateMessage: 'encEventUpdate',
-}
-
-export function getMessageType(obj: any): string[] {
-  obj = jsonParse(obj)
-  console.log({obj})
-  if (typeof obj !== 'object' || obj === null) return [];
-  for (const key of Object.keys(obj)) {
-    if (Object.keys(MESSAGE_TYPE).includes(key)) return [MESSAGE_TYPE[key as keyof typeof MESSAGE_TYPE], key];
-  }
-  for (const value of Object.values(obj)) {
-    const nestedType = getMessageType(value);
-    if (nestedType) return nestedType;
-  }
-  return [];
 }

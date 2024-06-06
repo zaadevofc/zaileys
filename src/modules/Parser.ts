@@ -5,6 +5,8 @@ import { MessageParserProps } from './../types/Parser';
 
 export function MessageParser(ctx: proto.IWebMessageInfo[], config: ClientProps): MessageParserProps {
   let messages: any = ctx.map((msg, i) => {
+    if (getMessageType(msg.message).length == 0) return;
+    
     console.log(jsonString(msg))
 
     let bodyObj = removeKeys(msg.message, ['contextInfo'])
@@ -42,7 +44,7 @@ export function MessageParser(ctx: proto.IWebMessageInfo[], config: ClientProps)
         isGroup: jsonString(bodyKey).includes('@g.us') ?? false,
         isViewOnce: jsonString(bodyObj).includes('viewOnce'),
         isBroadcast: msg.broadcast,
-        isAuthor: bodyJid,
+        isAuthor: config.authors!.includes(Number(bodyJid?.split('@')[0])),
         media: bodyMedia,
       },
       reply: replyObj && {

@@ -11,6 +11,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "outDir": "dist",
+    "skipLibCheck": true,
     "resolveJsonModule": true
   },
   "include": ["src"],

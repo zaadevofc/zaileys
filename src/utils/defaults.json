@@ -2,5 +2,6 @@
   "author": "https://github.com/zaadevofc",
   "repository": "https://github.com/zaadevofc/zaileys",
   "package": "https://www.npmjs.com/package/zaileys",
-  "version": [2, 2413, 1]
+  "version": [2, 2413, 1],
+  "browser": ["Mac OS", "chrome", "121.0.6167.159"]
 }
