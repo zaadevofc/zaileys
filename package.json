@@ -11,7 +11,7 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "homepage": "https://github.com/zaadevofc/zaileys",
+  "homepage": "https://zaadevofc.github.io/zaileys/",
   "funding": "https://ko-fi.com/zaadevofc",
   "bugs": {
     "url": "https://github.com/zaadevofc/zaileys/issues"
