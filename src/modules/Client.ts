@@ -120,7 +120,7 @@ export class Client {
             ]);
             cache.set('canNext', true)
           }
-          await saveCreds();
+          await saveCreds(); 
         };
 
         // Connection update event handler
