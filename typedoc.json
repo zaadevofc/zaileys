@@ -5,7 +5,19 @@
   "excludeProtected": true,
   "excludeExternals": true,
   "includeVersion": false,
+  "entryPointStrategy": "expand",
   "customCss": "./docs.css",
   "out": "docs",
-  "gaID": "G-T0LG3JX1FJ"
+  "gaID": "G-T0LG3JX1FJ",
+  "extends": [],
+  "navigationLinks": {
+    "⭐ Star on Github": "https://github.com/zaadevofc/zaileys"
+  },
+  "sidebarLinks": {
+    "💖 Support Me": "https://ko-fi.com/zaadevofc",
+    "🤝 Trakteer": "https://trakteer.id/zaadevofc/",
+    "😾 Saweria": "https://saweria.co/zaadevofc",
+    "": ""
+  },
+  "pretty": true
 }
