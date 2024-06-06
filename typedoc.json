@@ -1,5 +1,10 @@
 {
   "entryPoints": ["src/index.ts"],
   "exclude": ["**/node_modules/**"],
-  "out": "docs"
+  "out": "docs",
+  "customCss": "./docs.css",
+  "gaID": "",
+  "hideGenerator": true,
+  "htmlLang": "en",
+  "readme": "README.MD"
 }
