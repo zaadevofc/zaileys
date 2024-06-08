@@ -1,4 +1,4 @@
-import { AuthenticationState, UserFacingSocketConfig, makeCacheableSignalKeyStore, makeInMemoryStore, proto } from "@whiskeysockets/baileys";
+import { AuthenticationState, UserFacingSocketConfig, makeCacheableSignalKeyStore, makeInMemoryStore, proto } from "baileys";
 import NodeCache from "node-cache";
 import pino from 'pino';
 import { ClientProps } from "../types";
@@ -25,10 +25,10 @@ export function ConnectionConfig(props: ClientProps, state: AuthenticationState,
     generateHighQualityLinkPreview: true,
     browser: defaults.browser as never,
     version: defaults.version as never,
-    logger: pino({ level: 'fatal' }) as never,
+    logger: pino({ enabled: false }),
     auth: {
       creds: state.creds,
-      keys: makeCacheableSignalKeyStore(state.keys, pino().child({ level: 'silent', stream: 'store' }) as any),
+      keys: makeCacheableSignalKeyStore(state.keys, pino({ enabled: false })),
     },
     getMessage,
     patchMessageBeforeSending: (message: any) => {
@@ -90,16 +90,16 @@ export const MESSAGE_TYPE = {
   paymentInviteMessage: 'paymentInvite',
   interactiveMessage: 'interactive',
   reactionMessage: 'reaction',
-  stickerSyncRmrMessage: 'stickerSyncRmr',
+  stickerSyncRmrMessage: 'sticker',
   interactiveResponseMessage: 'interactiveResponse',
   pollCreationMessage: 'pollCreation',
   pollUpdateMessage: 'pollUpdate',
   keepInChatMessage: 'keepInChat',
-  documentWithCaptionMessage: 'documentWithCaption',
+  documentWithCaptionMessage: 'document',
   requestPhoneNumberMessage: 'requestPhoneNumber',
   viewOnceMessageV2: 'viewOnce',
-  encReactionMessage: 'encReaction',
-  editedMessage: 'edited',
+  encReactionMessage: 'reaction',
+  editedMessage: 'text',
   viewOnceMessageV2Extension: 'viewOnce',
   pollCreationMessageV2: 'pollCreation',
   scheduledCallCreationMessage: 'scheduledCallCreation',

@@ -1,4 +1,4 @@
-import { makeInMemoryStore, proto, UserFacingSocketConfig } from '@whiskeysockets/baileys';
+import { WAMessage, makeInMemoryStore, AuthenticationState, UserFacingSocketConfig } from 'baileys';
 
 /**
  * Represents the properties of the ReadyParserProps.
@@ -74,120 +74,44 @@ type MessageParserProps = MessageInternalProps[] & {
      */
     body: {
         type: MessageTypeProps;
-        text?: string;
+        text?: string | undefined;
     };
 }[];
 
-/**
- * Utility type for providing a prettier version of a type.
- * It is used to create a type where all keys are required.
- * @template T - The original type to create a prettier version of.
- */
 type Prettify<T> = {
     [K in keyof T]: T[K];
 } & {};
-/**
- * Represents the properties of the client.
- * It is used to configure the client.
- */
 type ClientProps = {
-    /**
-     * The phone number associated with the client.
-     */
     phoneNumber: number;
-    /**
-     * Whether the client is in pairing mode.
-     * If not provided, it defaults to true.
-     */
     pairing?: boolean;
-    /**
-     * Whether to show logs.
-     * If not provided, it defaults to true.
-     */
     showLogs?: boolean;
-    /**
-     * The list of authorized users.
-     */
+    ignoreMe?: boolean;
     authors?: number[];
-    /**
-     * The state of the client.
-     */
-    state?: any;
-    /**
-     * The user associated with the client.
-     */
-    me?: any;
-    /**
-     * The store associated with the client.
-     */
-    store?: ReturnType<typeof makeInMemoryStore>;
 };
-/**
- * Represents the actions that can be performed by the client.
- */
 type ActionsProps = {
-    /**
-     * The properties of a message.
-     */
     message: MessageParserProps;
-    /**
-     * The properties of a connection.
-     */
     connection: ReadyParserProps;
 };
 
-/**
- * Client class for WhatsApp Web connection
- */
 declare class Client {
-    /**
-     * If the client is in pairing mode
-     */
-    readonly pairing: boolean;
-    /**
-     * Phone number of the client
-     */
-    readonly phoneNumber: number;
-    /**
-     * If the client should show logs
-     */
-    readonly showLogs: boolean;
-    /**
-     * Authorized phone numbers of the client
-     */
-    readonly authors: number[];
+    pairing: boolean;
+    phoneNumber: number;
+    showLogs: boolean;
+    authors: number[];
+    ignoreMe: boolean;
+    private canNext;
     private socket;
-    private store;
-    private state;
-    private me;
-    /**
-     * Constructor for the client
-     * @param {ClientProps} props - The client properties
-     */
-    constructor({ pairing, phoneNumber, showLogs, authors }: ClientProps);
-    /**
-     * Setter for the client state
-     * @param {any} state - The state to set
-     */
-    set saveState(state: any);
-    /**
-     * Client connection initialization
-     * @returns {Promise<WASocket>} - The socket connection
-     */
-    private client;
-    /**
-     * Event handler for specific actions
-     * @param {T} actions - The actions to listen to
-     * @param {(ctx: Prettify<ActionsProps[T]>) => void} callback - The callback function
-     */
-    on<T extends keyof ActionsProps>(actions: T, callback: (ctx: Prettify<ActionsProps[T]>) => void): void;
+    private sock;
+    constructor({ pairing, phoneNumber, showLogs, authors, ignoreMe }: ClientProps);
+    private init;
+    on<T extends keyof ActionsProps>(actions: T, callback: (ctx: Prettify<ActionsProps[T]>) => void): Promise<void>;
 }
 
 declare function InitDisplay(config: ClientProps): void;
 
-declare function MessageParser(ctx: proto.IWebMessageInfo[], config: ClientProps): MessageParserProps;
+declare function MessageParser(ctx: WAMessage[], config: ClientProps, store: ReturnType<typeof makeInMemoryStore>): Promise<MessageParserProps | undefined>;
 
-declare function ConnectionConfig(props: ClientProps): UserFacingSocketConfig;
+declare function ConnectionConfig(props: ClientProps, state: AuthenticationState, store: ReturnType<typeof makeInMemoryStore>): UserFacingSocketConfig;
 declare const MESSAGE_TYPE: {
     text: string;
     conversation: string;
@@ -253,7 +177,6 @@ declare const MESSAGE_TYPE: {
     placeholderMessage: string;
     encEventUpdateMessage: string;
 };
-declare function getMessageType(obj: any): string[];
 
 declare function loop(cb: () => void, ms: number): NodeJS.Timeout;
 declare function jsonString(obj: any): any;
@@ -264,5 +187,6 @@ declare const fetchJson: (uri: any, method?: any) => Promise<any>;
 declare const postJson: (uri: any, data: any) => Promise<any>;
 declare function getValuesByKeys(object: any, keys: string[]): any[];
 declare function removeKeys(object: any, keys: string[]): any;
+declare function getMessageType(obj: any): string[];
 
 export { type ActionsProps, Client, type ClientProps, ConnectionConfig, InitDisplay, MESSAGE_TYPE, MessageParser, type Prettify, delay, fetchJson, getMessageType, getValuesByKeys, jsonParse, jsonString, loop, postJson, removeKeys, timeout };

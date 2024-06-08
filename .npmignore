@@ -5,5 +5,7 @@ docs
 
 .env
 .github
+docs.css
 tsconfig.json
+typedoc.json
 tsup.config.ts

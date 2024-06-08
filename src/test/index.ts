@@ -15,9 +15,8 @@ client.on('connection', (ctx) => {
 })
 
 client.on('message', (ctx) => {
-  // if(ctx[0].body.text == 'ss') {
-
-  // }
-  // console.log(JSON.stringify(ctx, null, 2))
   console.log('ssss ', jsonString(ctx))
+  if (ctx[0].body.text == 'p') {
+    console.log('hallo')
+  }
 })

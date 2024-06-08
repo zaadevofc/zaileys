@@ -6,7 +6,7 @@
     "email": "zaadevofc@gmail.com",
     "url": "https://github.com/zaadevofc"
   },
-  "version": "0.25.1-dev",
+  "version": "0.27.1-dev",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -24,7 +24,7 @@
     "test:dev": "ts-node-dev src/test",
     "test": "ts-node src/test",
     "docs": "npx typedoc",
-    "prod": "tsup && npm publish"
+    "prod": "tsup && npx typedoc && npm publish"
   },
   "engines": {
     "node": ">=18"
@@ -41,7 +41,8 @@
     "zaadevofc@gmail.com"
   ],
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.2",
+    "@hapi/boom": "^10.0.1",
+    "baileys": "github:WhiskeySockets/Baileys",
     "cfonts": "^3.2.0",
     "chalk": "^4.1.2",
     "dayjs": "^1.11.11",
@@ -56,6 +57,7 @@
     "ws": "^8.17.0"
   },
   "devDependencies": {
+    "@types/hapi__boom": "^9.0.1",
     "@types/node": "^20.13.0",
     "@types/ws": "^8.5.10",
     "tsup": "^8.0.2",

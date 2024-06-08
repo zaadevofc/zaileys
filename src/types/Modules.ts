@@ -1,4 +1,3 @@
-import { makeInMemoryStore } from "@whiskeysockets/baileys";
 import { MessageParserProps, ReadyParserProps } from "./Parser";
 
 export type Prettify<T> = {

@@ -8,9 +8,12 @@ importers:
 
   .:
     dependencies:
-      '@whiskeysockets/baileys':
-        specifier: ^6.7.2
-        version: 6.7.2(link-preview-js@3.0.5)(qrcode-terminal@0.12.0)
+      '@hapi/boom':
+        specifier: ^10.0.1
+        version: 10.0.1
+      baileys:
+        specifier: github:WhiskeySockets/Baileys
+        version: https://codeload.github.com/WhiskeySockets/Baileys/tar.gz/f422684b534ddad96df48ebd2c4ebd3d0a4d7da1(link-preview-js@3.0.5)(qrcode-terminal@0.12.0)
       cfonts:
         specifier: ^3.2.0
         version: 3.2.0
@@ -48,6 +51,9 @@ importers:
         specifier: ^8.17.0
         version: 8.17.0
     devDependencies:
+      '@types/hapi__boom':
+        specifier: ^9.0.1
+        version: 9.0.1
       '@types/node':
         specifier: ^20.13.0
         version: 20.13.0
@@ -210,8 +216,14 @@ packages:
   '@eshaz/web-worker@1.2.2':
     resolution: {integrity: sha512-WxXiHFmD9u/owrzempiDlBB1ZYqiLnm9s6aPc8AlFQalq2tKmqdmMr9GXOupDgzXtqnBipj8Un0gkIm7Sjf8mw==}
 
+  '@hapi/boom@10.0.1':
+    resolution: {integrity: sha512-ERcCZaEjdH3OgSJlyjVk8pHIFeus91CjKP3v+MpgBNp5IvGzP2l/bRiD78nqYcKPaZdbKkK5vDBVPd2ohHBlsA==}
+
   '@hapi/boom@9.1.4':
     resolution: {integrity: sha512-Ls1oH8jaN1vNsqcaHVYJrKmgMcKsC1wcp8bujvXrHaAqD2iDYq3HoOwsxwo09Cuda5R5nC0o0IxlrlTuvPuzSw==}
+
+  '@hapi/hoek@11.0.4':
+    resolution: {integrity: sha512-PnsP5d4q7289pS2T2EgGz147BFJ2Jpb4yrEdkpz2IhgEUzos1S7HTl7ezWh1yfYzYlj89KzLdCRkqsP6SIryeQ==}
 
   '@hapi/hoek@9.3.0':
     resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
@@ -378,6 +390,10 @@ packages:
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
+  '@types/hapi__boom@9.0.1':
+    resolution: {integrity: sha512-TSqwgnTmNNp3/9uOpV16S8IVJv+QDmZLEImSuQrzGLCzmuK5P3bx3wdaXGXxfWLlN09Qqnd27POLrEAKhVCM5g==}
+    deprecated: Deprecated
+
   '@types/long@4.0.2':
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
 
@@ -401,23 +417,6 @@ packages:
 
   '@wasm-audio-decoders/ogg-vorbis@0.1.15':
     resolution: {integrity: sha512-skAN3NIrRzMkVouyfyq3gYT/op/K9iutMZr7kr5/9fnIaCnpYdrdbv69X8PZ6y3K2J5zy5KuGno5kzH8yGLOOg==}
-
-  '@whiskeysockets/baileys@6.7.2':
-    resolution: {integrity: sha512-ttZJuFo4iuwzQbUClx+RKaREStaVYwc0uNRlcd5kLEV3z8Lp2fcoKqrFMKIQbm6+8dgGK8MdYHGtAv9eh//itg==}
-    peerDependencies:
-      jimp: ^0.16.1
-      link-preview-js: ^3.0.0
-      qrcode-terminal: ^0.12.0
-      sharp: ^0.32.2
-    peerDependenciesMeta:
-      jimp:
-        optional: true
-      link-preview-js:
-        optional: true
-      qrcode-terminal:
-        optional: true
-      sharp:
-        optional: true
 
   abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -465,6 +464,9 @@ packages:
     resolution: {integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==}
     engines: {node: '>=8'}
 
+  async-lock@1.4.1:
+    resolution: {integrity: sha512-Az2ZTpuytrtqENulXwO3GGv1Bztugx6TT37NIo7imr/Qo0gsYiGtSdBa2B6fsXhTpVZDNfu1Qn3pk531e3q+nQ==}
+
   async@3.2.3:
     resolution: {integrity: sha512-spZRyzKL5l5BZQrr/6m/SqFdBN0q3OCI0f9rjfBzCMBIP4p75P620rR3gTmaksNOhmzgdxcaxdNfMy6anrbM0g==}
 
@@ -487,6 +489,24 @@ packages:
 
   axios@1.7.2:
     resolution: {integrity: sha512-2A8QhOMrbomlDuiLeK9XibIBzuHeRcqqNOHp0Cyp5EoJ1IFDh+XZH3A6BkXtv0K4gFGCI0Y4BM7B1wOEi0Rmgw==}
+
+  baileys@https://codeload.github.com/WhiskeySockets/Baileys/tar.gz/f422684b534ddad96df48ebd2c4ebd3d0a4d7da1:
+    resolution: {tarball: https://codeload.github.com/WhiskeySockets/Baileys/tar.gz/f422684b534ddad96df48ebd2c4ebd3d0a4d7da1}
+    version: 6.7.4
+    peerDependencies:
+      jimp: ^0.16.1
+      link-preview-js: ^3.0.0
+      qrcode-terminal: ^0.12.0
+      sharp: ^0.32.2
+    peerDependenciesMeta:
+      jimp:
+        optional: true
+      link-preview-js:
+        optional: true
+      qrcode-terminal:
+        optional: true
+      sharp:
+        optional: true
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -1464,9 +1484,15 @@ snapshots:
 
   '@eshaz/web-worker@1.2.2': {}
 
+  '@hapi/boom@10.0.1':
+    dependencies:
+      '@hapi/hoek': 11.0.4
+
   '@hapi/boom@9.1.4':
     dependencies:
       '@hapi/hoek': 9.3.0
+
+  '@hapi/hoek@11.0.4': {}
 
   '@hapi/hoek@9.3.0': {}
 
@@ -1592,6 +1618,10 @@ snapshots:
 
   '@types/estree@1.0.5': {}
 
+  '@types/hapi__boom@9.0.1':
+    dependencies:
+      '@hapi/boom': 10.0.1
+
   '@types/long@4.0.2': {}
 
   '@types/node@10.17.60': {}
@@ -1622,31 +1652,6 @@ snapshots:
     dependencies:
       '@wasm-audio-decoders/common': 9.0.5
       codec-parser: 2.4.3
-
-  '@whiskeysockets/baileys@6.7.2(link-preview-js@3.0.5)(qrcode-terminal@0.12.0)':
-    dependencies:
-      '@adiwajshing/keyed-db': 0.2.4
-      '@hapi/boom': 9.1.4
-      audio-decode: 2.2.0
-      axios: 1.7.2
-      cache-manager: 4.0.1
-      futoin-hkdf: 1.5.3
-      libphonenumber-js: 1.11.2
-      libsignal: https://codeload.github.com/adiwajshing/libsignal-node/tar.gz/11dbd962ea108187c79a7c46fe4d6f790e23da97
-      music-metadata: 7.14.0
-      node-cache: 5.1.2
-      pino: 7.11.0
-      protobufjs: 7.3.0
-      uuid: 9.0.1
-      ws: 8.17.0
-    optionalDependencies:
-      link-preview-js: 3.0.5
-      qrcode-terminal: 0.12.0
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - supports-color
-      - utf-8-validate
 
   abort-controller@3.0.0:
     dependencies:
@@ -1681,6 +1686,8 @@ snapshots:
 
   array-union@2.1.0: {}
 
+  async-lock@1.4.1: {}
+
   async@3.2.3: {}
 
   asynckit@0.4.0: {}
@@ -1709,6 +1716,32 @@ snapshots:
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
+
+  baileys@https://codeload.github.com/WhiskeySockets/Baileys/tar.gz/f422684b534ddad96df48ebd2c4ebd3d0a4d7da1(link-preview-js@3.0.5)(qrcode-terminal@0.12.0):
+    dependencies:
+      '@adiwajshing/keyed-db': 0.2.4
+      '@hapi/boom': 9.1.4
+      async-lock: 1.4.1
+      audio-decode: 2.2.0
+      axios: 1.7.2
+      cache-manager: 4.0.1
+      futoin-hkdf: 1.5.3
+      libphonenumber-js: 1.11.2
+      libsignal: https://codeload.github.com/adiwajshing/libsignal-node/tar.gz/11dbd962ea108187c79a7c46fe4d6f790e23da97
+      music-metadata: 7.14.0
+      node-cache: 5.1.2
+      pino: 7.11.0
+      protobufjs: 7.3.0
+      uuid: 9.0.1
+      ws: 8.17.0
+    optionalDependencies:
+      link-preview-js: 3.0.5
+      qrcode-terminal: 0.12.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
 
   balanced-match@1.0.2: {}
 
