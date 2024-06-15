@@ -6,13 +6,13 @@
     "email": "zaadevofc@gmail.com",
     "url": "https://github.com/zaadevofc"
   },
-  "version": "0.27.1-dev",
+  "version": "0.28.1-dev",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "homepage": "https://zaadevofc.github.io/zaileys/",
-  "funding": "https://ko-fi.com/zaadevofc",
+  "funding": "https://trakteer.id/zaadevofc",
   "bugs": {
     "url": "https://github.com/zaadevofc/zaileys/issues"
   },
@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "tsup",
-    "test:dev": "ts-node-dev src/test",
+    "dev": "ts-node-dev src/test",
     "test": "ts-node src/test",
     "docs": "npx typedoc",
     "prod": "tsup && npx typedoc && npm publish"
@@ -60,6 +60,7 @@
     "@types/hapi__boom": "^9.0.1",
     "@types/node": "^20.13.0",
     "@types/ws": "^8.5.10",
+    "pino-pretty": "^11.1.0",
     "tsup": "^8.0.2",
     "typedoc": "^0.25.13",
     "typescript": "^5.4.5"

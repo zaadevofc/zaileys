@@ -1,22 +1,20 @@
-// import { Client, jsonString } from '../../dist'
-import { Client, jsonString } from '..'
+import { Client } from '..'
 
-const client = new Client({
+const wa = new Client({
   phoneNumber: 6285878897780,
   pairing: true,
   showLogs: true,
-  authors: [6285878897780],
+  authors: [6285878897780]
 })
 
-client.on('connection', (ctx) => {
-  if (ctx == 'ready') {
-    // client.send('Haloo', { id: 34 })
+wa.on('message', async(ctx) => {
+  console.log(ctx)
+  
+  if (ctx.body.text == 'hai') {
+    await wa.sendMsg('hallo aku bot whatsapp...', { jid: ctx.body.remoteJid })
   }
 })
 
-client.on('message', (ctx) => {
-  console.log('ssss ', jsonString(ctx))
-  if (ctx[0].body.text == 'p') {
-    console.log('hallo')
-  }
-})
+wa.on('connection', async(ctx) => {
+  console.log(ctx)
+}) 

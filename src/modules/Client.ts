@@ -1,52 +1,58 @@
 import { Boom } from "@hapi/boom";
 import {
-  BaileysEventMap,
+  AuthenticationState,
   DisconnectReason,
   makeInMemoryStore,
   makeWASocket,
   useMultiFileAuthState
 } from "baileys";
-import chalk from "chalk";
+import ora from "ora";
 import { ActionsProps, ClientProps, Prettify } from "../types";
-import { ConnectionConfig, delay, getMessageType, jsonString, loop } from "../utils";
+import { ConnectionConfig, delay, loop } from "../utils";
+import { Actions } from "./Actions";
 import { InitDisplay } from "./Display";
 import { MessageParser } from "./Parser";
-import { cache, socket } from "./Socket";
-import pino from "pino";
+import { socket } from "./Socket";
 
-export class Client {
+export class Client extends Actions {
   public pairing: boolean;
+  public markOnline: boolean;
   public phoneNumber: number;
   public showLogs: boolean;
   public authors: number[];
   public ignoreMe: boolean;
-  private canNext: boolean = false;
 
   private socket = socket;
-  private sock: Partial<ReturnType<typeof makeWASocket>> = {};
+  private registeredActions: Set<string> = new Set(); // Set untuk melacak actions yang sudah didaftarkan
+  private socked: Partial<{ sock: ReturnType<typeof makeWASocket>, store: ReturnType<typeof makeInMemoryStore>, state: AuthenticationState }> = {};
+  private spinners: ora.Ora = ora();
+  private initialized: boolean = false;
 
-  constructor({ pairing, phoneNumber, showLogs, authors, ignoreMe }: ClientProps) {
+  constructor({ pairing, markOnline, phoneNumber, showLogs, authors, ignoreMe }: ClientProps) {
+    super({ pairing, markOnline, phoneNumber, showLogs, authors, ignoreMe });
     this.pairing = pairing ?? true;
+    this.markOnline = pairing ?? true;
     this.phoneNumber = phoneNumber;
     this.showLogs = showLogs ?? true;
     this.ignoreMe = ignoreMe ?? false;
     this.authors = authors ?? [];
-
-    this.init();
   }
 
   private async init() {
+    InitDisplay(this);
+    this.spinners.start('Connecting to server...');
+
     const store = makeInMemoryStore({});
     const { state, saveCreds } = await useMultiFileAuthState("session/zaileys");
-    store.readFromFile("session/data.json");
 
     loop(async () => {
       try {
+        store.readFromFile("session/data.json");
         store.writeToFile("session/data.json");
       } catch (error) {
-        await this.socket.emit('conn_msg', ['fail', chalk.yellow(`[DETECTED] session folder has been deleted by the user`)]);
+        await this.spinners.fail(`Warning: Cannot detect session file`);
         await delay(2000);
-        await this.socket.emit('conn_msg', ['fail', chalk.yellow(`Please rerun the program...`)]);
+        await this.spinners.info(`Please rerun the program...`);
         await process.exit();
       }
     }, 10_000);
@@ -56,61 +62,82 @@ export class Client {
 
     sock.ev.on("creds.update", saveCreds);
 
+    if (this.pairing && this.phoneNumber && !sock.authState.creds.registered) {
+      this.spinners.text = 'Initialization new session...';
+      await delay(2000);
+      this.spinners.text = `Creating new pairing code...`;
+      await delay(6000);
+      try {
+        const code = await sock.requestPairingCode(this.phoneNumber.toString());
+        this.spinners.info(`Connect with pairing code : ${(code)}`);
+      } catch (error) {
+        this.spinners.fail('Connection close. Please delete session and run again...');
+        process.exit(0);
+      }
+    }
+
     sock.ev.on("connection.update", async (update) => {
-      const ready = InitDisplay(this as never);
-      const { connection, lastDisconnect } = update;
+      const { connection, lastDisconnect, qr } = update;
 
       if (connection == 'connecting') {
-        console.log('menghubungkan....')
+        this.spinners.start('Connecting to server...');
       }
 
-      if (this.pairing && this.phoneNumber && !state.creds.me && !sock.authState.creds.registered) {
-        this.socket.emit('conn_msg', ['start', 'Initialization new session...']);
-        await delay(2000);
-        this.socket.emit('conn_msg', ['start', `Creating new pairing code...`]);
-        await delay(6000);
-        const code = await sock.requestPairingCode(this.phoneNumber.toString());
-        this.socket.emit('conn_msg', ['info', `Connect with pairing code : ${chalk.green(code)}`]);
+      if (!this.pairing && qr) {
+        this.spinners.info('Scan this QR Code with your WhatsApp');
       }
 
       if (connection === "close") {
-        const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
+        const lastCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
+        const shouldReconnect = lastCode !== DisconnectReason.loggedOut;
         if (shouldReconnect) {
-          console.log('reconecting...');
-          this.init();
+          await this.spinners.info('Reconnecting to server...');
+          await (this.initialized = false)
+          await this.init();
+        } else {
+          this.spinners.fail('Detected logout. Please delete session and run again');
+          process.exit(0);
         }
       } else if (connection === "open") {
-        console.log('koneekk');
+        this.spinners.succeed('Successfully connected to server');
+        console.log();
       }
     });
 
-    sock.ev.process(async (data) => {
-      if (data['messages.upsert']) {
-        const msg = data['messages.upsert'];
-        console.log(jsonString({ msg }))
-        const parse: any = await MessageParser(msg.messages, this as never, store)
-        if (parse.filter((x: any) => x).length == 0) return;
-        await this.socket.emit('messages.upsert', parse)
-      }
-    })
-
+    this.socked = { sock, store, state };
+    this.initialized = true;
+    return { sock, store, state };
   }
 
   async on<T extends keyof ActionsProps>(actions: T, callback: (ctx: Prettify<ActionsProps[T]>) => void) {
-    const call = (name: Partial<keyof BaileysEventMap>, cb: (x: any) => void) => this.socket.on(name, cb);
 
-    switch (actions) {
-      case 'connection':
-        // call(actions, (msg) => callback(msg));
-        break;
+    if (!this.registeredActions.has(actions)) {
+      this.registeredActions.add(actions);
 
-      case 'message':
-        call('messages.upsert', (msg) => {
-          if (!msg) return;
-          callback(msg)
-        });
-        break;
+      if (!this.initialized) {
+        if ((this.registeredActions.has('connection') ?? this.registeredActions.has('message'))) {
+          await this.init();
+        }
+      }
+
+      switch (actions) {
+        case 'connection':
+          // Handler untuk 'connection' jika diperlukan
+          break;
+
+        case 'message':
+          this.socked.sock?.ev.on('messages.upsert', async (msg: any) => {
+            const parse: any = await MessageParser(msg.messages, this as never, this.socked.store!, this.socked.state!);
+            parse.forEach((x: any) => {
+              if (x) callback(x);
+            });
+          });
+          break;
+      }
     }
   }
-}
 
+  async sendMsg(text: string, { jid }: { jid: string }) {
+    await this.socked.sock?.sendMessage!(jid, { text });
+  }
+}

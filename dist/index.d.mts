@@ -1,82 +1,38 @@
 import { WAMessage, makeInMemoryStore, AuthenticationState, UserFacingSocketConfig } from 'baileys';
 
-/**
- * Represents the properties of the ReadyParserProps.
- * Used to represent the status of the client.
- */
 type ReadyParserProps = 'ready' | 'connecting' | 'close';
-/**
- * Represents the properties of the MessageTypeProps.
- * Used to represent the type of the message.
- */
-type MessageTypeProps = 'text' | 'sticker' | 'image' | 'video' | 'document' | 'product' | 'reaction' | 'gif' | 'audio' | 'voice' | 'contact' | 'polling' | 'location' | 'unknown';
-/**
- * Represents the internal properties of a message.
- * Used to hold the essential information about a message.
- */
-type MessageInternalProps = {
-    /**
-     * The ID of the chat the message is in.
-     * @type {string}
-     */
-    chatId: string;
-    /**
-     * Whether the message was sent by the current user.
-     * @type {boolean}
-     */
-    fromMe: boolean;
-    /**
-     * The user's username.
-     * @type {string}
-     */
-    pushName: string;
-    /**
-     * The user's ID.
-     * @type {string}
-     */
-    remoteJid: string;
-    /**
-     * The timestamp of the message.
-     * @type {number}
-     */
-    timestamp: number;
-    /**
-     * Whether the message is from an authorized user.
-     * @type {boolean}
-     */
-    isAuthor: boolean;
-    /**
-     * Whether the message is a broadcast message.
-     * @type {boolean}
-     */
-    isBroadcast: boolean;
-    /**
-     * Whether the message is sent in a group.
-     * @type {boolean}
-     */
-    isGroup: boolean;
-    /**
-     * Whether the message is a view-once message.
-     * @type {boolean}
-     */
-    isViewOnce: boolean;
-};
-/**
- * Represents the parsed properties of a message.
- * Used to hold the parsed information about a message.
- */
-type MessageParserProps = MessageInternalProps[] & {
-    /**
-     * The body of the message.
-     * @type {Object}
-     * @property {MessageTypeProps} type - The type of the message.
-     * @property {string} [text] - The text of the message (if applicable).
-     */
+type MessageParserProps = {
     body: {
-        type: MessageTypeProps;
-        text?: string | undefined;
+        fromMe: boolean;
+        chatId: string;
+        remoteJid: string;
+        participant: string;
+        pushName: string;
+        timestamp: number;
+        type: string;
+        text: string;
+        isStory: boolean;
+        isGroup: boolean;
+        isViewOnce: boolean;
+        isForwarded: boolean;
+        isEdited: boolean;
+        isBroadcast: boolean;
+        isAuthor: boolean;
+        isEphemeral: boolean;
+        media: any;
     };
-}[];
+    reply: {
+        chatId: string;
+        participant: string;
+        type: string;
+        text: string;
+        isGroup: boolean;
+        isViewOnce: boolean;
+        isForwarded: boolean;
+        isAuthor: boolean;
+        media: any;
+    };
+};
 
 type Prettify<T> = {
     [K in keyof T]: T[K];
@@ -84,6 +40,7 @@ type Prettify<T> = {
 type ClientProps = {
     phoneNumber: number;
     pairing?: boolean;
+    markOnline?: boolean;
     showLogs?: boolean;
     ignoreMe?: boolean;
     authors?: number[];
@@ -93,23 +50,35 @@ type ActionsProps = {
     connection: ReadyParserProps;
 };
 
-declare class Client {
+declare class Actions {
+    constructor({ pairing, markOnline, phoneNumber, showLogs, authors, ignoreMe }: ClientProps);
+    sendText(): string;
+    sendReply(): void;
+}
+
+declare class Client extends Actions {
     pairing: boolean;
+    markOnline: boolean;
     phoneNumber: number;
     showLogs: boolean;
     authors: number[];
     ignoreMe: boolean;
-    private canNext;
     private socket;
-    private sock;
-    constructor({ pairing, phoneNumber, showLogs, authors, ignoreMe }: ClientProps);
+    private socked;
+    private spinners;
+    private initialized;
+    private initPromise;
+    constructor({ pairing, markOnline, phoneNumber, showLogs, authors, ignoreMe }: ClientProps);
     private init;
     on<T extends keyof ActionsProps>(actions: T, callback: (ctx: Prettify<ActionsProps[T]>) => void): Promise<void>;
+    sendMsg(text: string, { jid }: {
+        jid: string;
+    }): Promise<void>;
 }
 
 declare function InitDisplay(config: ClientProps): void;
 
-declare function MessageParser(ctx: WAMessage[], config: ClientProps, store: ReturnType<typeof makeInMemoryStore>): Promise<MessageParserProps | undefined>;
+declare function MessageParser(ctx: WAMessage[], config: ClientProps, store: ReturnType<typeof makeInMemoryStore>, state: AuthenticationState): Promise<MessageParserProps[] | undefined>;
 
 declare function ConnectionConfig(props: ClientProps, state: AuthenticationState, store: ReturnType<typeof makeInMemoryStore>): UserFacingSocketConfig;
 declare const MESSAGE_TYPE: {
@@ -189,4 +158,4 @@ declare function getValuesByKeys(object: any, keys: string[]): any[];
 declare function removeKeys(object: any, keys: string[]): any;
 declare function getMessageType(obj: any): string[];
 
-export { type ActionsProps, Client, type ClientProps, ConnectionConfig, InitDisplay, MESSAGE_TYPE, MessageParser, type Prettify, delay, fetchJson, getMessageType, getValuesByKeys, jsonParse, jsonString, loop, postJson, removeKeys, timeout };
+export { Actions, type ActionsProps, Client, type ClientProps, ConnectionConfig, InitDisplay, MESSAGE_TYPE, MessageParser, type Prettify, delay, fetchJson, getMessageType, getValuesByKeys, jsonParse, jsonString, loop, postJson, removeKeys, timeout };
