@@ -1,0 +1,42 @@
+{
+  "name": "zaileys",
+  "description": "bot wa",
+  "version": "0.28.5-dev",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --minify --clean",
+    "lint": "tsc",
+    "docs": "npx typedoc",
+    "dev": "ts-node-dev src/test",
+    "test": "ts-node src/test"
+  },
+  "homepage": "https://zaadevofc.github.io/zaileys/",
+  "funding": "https://.....",
+  "bugs": {
+    "url": "https://github.com/zaadevofc/zaileys/issues"
+  },
+  "repository": {
+    "url": "git+https://github.com/zaadevofc/zaileys.git"
+  },
+  "keywords": [
+    "zaileys"
+  ],
+  "author": "zaadevofc",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/figlet": "^1.5.8",
+    "@types/qrcode": "^1.5.5",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.7",
+    "cfonts": "^3",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

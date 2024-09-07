@@ -1,0 +1,13 @@
+node_modules
+src
+tsconfig.json
+pnpm - lock.yaml
+bin.env
+tsconfig.
+typedoc.json
+.github
+docs
+
+storage
+extends
+.zaileys
