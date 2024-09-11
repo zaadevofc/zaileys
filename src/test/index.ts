@@ -1,15 +1,14 @@
 import { Client } from '..';
 
-const client = new Client({
+const wa = new Client({
   phoneNumber: 62858788977802,
   method: 'pairing',
-  
 });
 
-client.on('open', () => {
+wa.on('open', () => {
   console.log('Connection is now open');
 });
 
-client.on('message', (data) => {
-  console.log('Received message:', JSON.stringify(data, null, 2));
+wa.on('message', (data) => {
+  console.log(JSON.stringify(data, null, 2));
 });

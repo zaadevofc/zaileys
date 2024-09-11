@@ -10,7 +10,8 @@
     "lint": "tsc",
     "docs": "npx typedoc",
     "dev": "ts-node-dev src/test",
-    "test": "ts-node src/test"
+    "test": "ts-node src/test",
+    "dm" : "node extends/system/main.js"
   },
   "homepage": "https://zaadevofc.github.io/zaileys/",
   "funding": "https://.....",
