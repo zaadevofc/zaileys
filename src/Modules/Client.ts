@@ -19,6 +19,9 @@ type ClientProps = {
   ignoreMe?: boolean;
 }
 
+const log = console.log;
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export class Client extends EventEmitter {
   private client!: ReturnType<typeof baileys.default>;
   public store!: ReturnType<typeof baileys.makeInMemoryStore>;
@@ -46,9 +49,14 @@ export class Client extends EventEmitter {
 
   async start() {
     try {
+      console.clear()
+      this.startLoading('Initializing client...');
+      await sleep(1000)
       if (this.isRunning) return;
       this.isRunning = true;
       await this.showBanner();
+      await sleep(1000)
+      this.spinner.text = 'Setupping client...';
       await this.setupClient();
       this.setupProcessHandlers();
     } catch (error) {
@@ -64,14 +72,18 @@ export class Client extends EventEmitter {
   }
 
   private async showBanner() {
-    console.clear();
-    cfonts.say('Zaileys', {
-      font: 'block',
-      colors: ['candy', '#ffce51'],
-      letterSpacing: 1,
-      lineHeight: 1
+    console.clear()
+    log("\n                 ", chalk.bgRed.bold.underline(` NPM `));
+    log("            ", chalk.bgYellowBright.black.bold(` Zaileys v1.2.2 `));
+    log("   ", chalk.bgYellowBright.black.bold(`  Copyright © ${new Date().getFullYear()} by zaadevofc  `));
+
+    cfonts.say(' Zaileys ', {
+      font: 'slick',
+      colors: ['#ffce51', 'blue'],
+      letterSpacing: 0.5,
     });
-    this.startLoading('Checking server connection...');
+
+    log(chalk.dim(`^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`));
   }
 
   private async setupClient() {
@@ -99,6 +111,27 @@ export class Client extends EventEmitter {
         const jid = baileys.jidNormalizedUser(key.remoteJid!);
         return (await this.store.loadMessage(jid, key.id!))?.message! || "";
       },
+      patchMessageBeforeSending: (message: any) => {
+        const requiresPatch = !!(
+          message.buttonsMessage
+          || message.templateMessage
+          || message.listMessage
+        );
+        if (requiresPatch) {
+          message = {
+            viewOnceMessage: {
+              message: {
+                messageContextInfo: {
+                  deviceListMetadataVersion: 2,
+                  deviceListMetadata: {},
+                },
+                ...message,
+              },
+            },
+          };
+        }
+        return message;
+      }
     });
 
     this.store.bind(this.client.ev);
@@ -145,7 +178,7 @@ export class Client extends EventEmitter {
   }
 
   startLoading(text: string): void {
-    this.spinner = ora({ text, color: 'cyan' }).start();
+    this.spinner = ora({ text, color: 'cyan' }).start()
   }
 
   stopLoading(text: string, status: 'succeed' | 'fail' | 'warn' | 'info' = 'succeed'): void {
