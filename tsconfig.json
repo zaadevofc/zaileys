@@ -5,8 +5,14 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "noUncheckedIndexedAccess": true,
     "noEmit": true
+  },
+  "paths": {
+    "~/*": [
+      "./src/*"
+    ]
   }
 }

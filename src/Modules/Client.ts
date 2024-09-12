@@ -2,8 +2,10 @@ import * as baileys from '@whiskeysockets/baileys';
 import cfonts from 'cfonts';
 import chalk from "chalk";
 import { EventEmitter } from 'events';
+import fs from 'fs';
 import NodeCache from 'node-cache';
 import ora from 'ora';
+import path from 'path';
 import pino from 'pino';
 import { Events } from './Events';
 
@@ -20,6 +22,17 @@ type ClientProps = {
 }
 
 const log = console.log;
+const logBlock = (status: 'succeed' | 'fail' | 'warn' | 'info' = 'succeed') => {
+  const init = {
+    succeed: 'bgGreen',
+    fail: 'bgRed',
+    warn: 'bgYellow',
+    info: 'bgCyan',
+  }[status]
+
+  return (chalk as any)[init](' ')
+}
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export class Client extends EventEmitter {
@@ -72,10 +85,15 @@ export class Client extends EventEmitter {
   }
 
   private async showBanner() {
+    const nT = " ".repeat(18) + chalk.bgRed.bold.underline(` NPM `);
+    const vT = " ".repeat(14) + chalk.bgYellowBright.black.bold(` ~ Zaileys ~ `);
+    const cT = " ".repeat(5) + chalk.bgYellowBright.black.bold` Copyright © ${new Date().getFullYear()} by {blue zaadevofc} `
+
     console.clear()
-    log("\n                 ", chalk.bgRed.bold.underline(` NPM `));
-    log("            ", chalk.bgYellowBright.black.bold(` Zaileys v1.2.2 `));
-    log("   ", chalk.bgYellowBright.black.bold(`  Copyright © ${new Date().getFullYear()} by zaadevofc  `));
+
+    log(nT);
+    log(vT);
+    log(cT);
 
     cfonts.say(' Zaileys ', {
       font: 'slick',
@@ -83,7 +101,7 @@ export class Client extends EventEmitter {
       letterSpacing: 0.5,
     });
 
-    log(chalk.dim(`^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^`));
+    log(chalk.dim(`^`.repeat(42)));
   }
 
   private async setupClient() {
@@ -135,7 +153,26 @@ export class Client extends EventEmitter {
     });
 
     this.store.bind(this.client.ev);
-    await this.setupPairingCode();
+
+    if (fs.existsSync(path.join("./.zaileys/zaileys-auth/creds.json")) && !this.client.authState.creds.registered) {
+      await this.stopLoading(chalk`{underline {red {bold Broken session!}}}\n  System will delete {yellowBright .zaileys/zaileys-auth} automatically.\n`, 'fail');
+      await sleep(500)
+      await this.startLoading(`Cleaning credentials automatically...`);
+      await sleep(500)
+      await fs.rm(path.join("./.zaileys/zaileys-auth"), { recursive: true }, async (err) => {
+        if (err) {
+          await this.stopLoading(chalk`{underline {red {bold Repair Error!}}}\n  Failed to delete {yellowBright .zaileys/zaileys-auth} automatically. System will try again.\n`, 'fail');
+          await sleep(500)
+          await this.restart.bind(this)
+        }
+      });
+      await sleep(500)
+      await this.stopLoading(chalk`{underline {blueBright {bold Success Repair Session}}}\n  Wait system automatically running...\n`, 'info');
+      await this.restart()
+      return;
+    }
+
+    this.setupPairingCode();
     this.events.setupEventListeners(saveCreds);
   }
 
@@ -146,12 +183,26 @@ export class Client extends EventEmitter {
         this.stopLoading("Invalid phone number", 'fail');
         process.exit(0);
       }
-      this.stopLoading("Connection ready");
-      this.startLoading("Waiting for pairing code...");
       setTimeout(async () => {
         try {
           const code = await this.client.requestPairingCode(phoneNumber);
-          this.stopLoading(`Pairing Code: ${chalk.bold(code)}`, 'info');
+          this.stopLoading(chalk`{blueBright.bold.underline Login with Pairing}\n  Generating code: {bgYellowBright.bold.black  ${code} }`, 'info');
+          this.startLoading(' ')
+
+          let i = 0
+          const interval = setInterval(async () => {
+            i++
+            this.spinner.text = chalk`{italic Code expired in {blueBright ${i}{bold /160}} sec}`
+
+            if (i == 10) {
+              clearInterval(interval)
+              this.stopLoading('Code was expired! Restart waiting...', 'warn')
+              this.restart()
+            }
+
+          }, 1000);
+
+
         } catch (error) {
           this.logger.error(error);
           this.stopLoading("Error requesting pairing code", 'fail');
@@ -178,12 +229,12 @@ export class Client extends EventEmitter {
   }
 
   startLoading(text: string): void {
-    this.spinner = ora({ text, color: 'cyan' }).start()
+    this.spinner = ora({ text: chalk`${text}`, color: 'yellow', spinner: 'dots3' }).start()
   }
 
   stopLoading(text: string, status: 'succeed' | 'fail' | 'warn' | 'info' = 'succeed'): void {
     if (this.spinner) {
-      this.spinner[status](text);
+      this.spinner.stopAndPersist({ text, symbol: logBlock(status) })
       this.spinner = null!;
     }
   }
